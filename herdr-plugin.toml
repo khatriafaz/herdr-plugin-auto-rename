@@ -1,0 +1,18 @@
+id = "afaz.auto-rename"
+name = "Auto Rename"
+version = "0.1.0"
+min_herdr_version = "0.7.0"
+platforms = ["macos", "linux"]
+description = "Rename a fresh Herdr worktree and its Git branch from the coding agent's first prompt."
+
+[[build]]
+command = ["npm", "ci"]
+
+[[build]]
+command = ["npm", "run", "build"]
+
+[[actions]]
+id = "rename"
+title = "Auto Rename: rename from selected text"
+contexts = ["pane", "workspace"]
+command = ["node", "dist/src/cli.js", "context"]

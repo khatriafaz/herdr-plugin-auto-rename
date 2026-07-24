@@ -1,0 +1,23 @@
+# Copy this file to:
+#   $(herdr plugin config-dir afaz.auto-rename)/config.toml
+
+enabled = true
+naming_strategy = "model" # model | heuristic
+generated_branch_pattern = "^worktree-"
+branch_prefix_style = "slash" # slash => feat/name, hyphen => feat-name, none => name
+collision_policy = "suffix" # suffix | fail
+max_title_length = 48
+max_slug_length = 48
+model_timeout_ms = 8000
+set_pi_session_name = true
+notify = true
+
+# Override individual inferred prefixes. Empty string removes the prefix.
+[prefixes]
+feature = "feat"
+fix = "fix"
+refactor = "refactor"
+docs = "docs"
+test = "test"
+chore = "chore"
+explore = "explore"
