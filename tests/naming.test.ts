@@ -36,6 +36,15 @@ test("heuristic naming converts project questions into an exploratory action", (
 	});
 });
 
+test("heuristic naming converts project explanation requests into an exploratory action", () => {
+	const proposal = heuristicName("tell me about this project", DEFAULT_CONFIG);
+	assert.deepEqual(proposal, {
+		title: "Understand project purpose",
+		kind: "explore",
+		slug: "understand-project-purpose",
+	});
+});
+
 test("model JSON is sanitized and bounded", () => {
 	const proposal = parseModelProposal(
 		'```json\n{"title":"Fix Login Redirect!!!","kind":"fix","slug":"Fix/Login Redirect"}\n```',

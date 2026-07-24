@@ -47,7 +47,6 @@ export async function nameWithPiModel(
 				...(authResult.env ? { env: authResult.env } : {}),
 				signal: controller.signal,
 				maxTokens: 120,
-				temperature: 0,
 				reasoning: "minimal",
 			},
 		);

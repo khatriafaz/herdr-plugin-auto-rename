@@ -5,7 +5,7 @@ const KIND_PATTERNS: Array<[TaskKind, RegExp]> = [
 	["refactor", /\b(refactor|restructure|reorganize|cleanup|clean up|simplify|extract|decouple)\b/i],
 	["docs", /\b(document|documentation|docs|readme|guide|changelog)\b/i],
 	["test", /\b(test|tests|testing|coverage|spec|specs)\b/i],
-	["explore", /(?:^\s*(?:please\s+)?(?:explore|investigate|research|plan|design|audit|review|what|how|why|explain|understand)\b|\b(?:spike|prototype)\b)/i],
+	["explore", /(?:^\s*(?:please\s+)?(?:explore|investigate|research|plan|design|audit|review|what|how|why|explain|understand|tell|describe)\b|\b(?:spike|prototype)\b)/i],
 	["chore", /\b(chore|dependency|dependencies|upgrade|update package|tooling|config|configuration|ci|build)\b/i],
 ];
 
@@ -64,6 +64,7 @@ export function heuristicName(prompt: string, config: AutoRenameConfig): NamePro
 	let cleaned = sentence.replace(LEADING_FILLER, "").replace(/[.!?:;,]+$/g, "").trim() || "Task";
 	if (/^what is this project about$/i.test(cleaned)) cleaned = "Understand project purpose";
 	else if (/^what does this (?:project|repository|repo) do$/i.test(cleaned)) cleaned = "Understand project purpose";
+	else if (/^(?:tell me about|describe|explain) this (?:project|repository|repo)$/i.test(cleaned)) cleaned = "Understand project purpose";
 	const title = wordsWithin(cleaned, config.maxTitleLength);
 	return sanitizeWithoutRecursion({ title, kind: inferTaskKind(prompt), slug: title }, config);
 }

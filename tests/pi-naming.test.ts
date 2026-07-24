@@ -9,6 +9,7 @@ function contextWithRegistry(registry: Record<string, unknown>): ExtensionContex
 }
 
 test("records dedicated model provenance when model naming succeeds", async () => {
+	let requestOptions: Record<string, unknown> | undefined;
 	const model = {
 		provider: "openai-codex",
 		id: "gpt-5.4-mini",
@@ -19,7 +20,9 @@ test("records dedicated model provenance when model naming succeeds", async () =
 		find: (provider: string, modelId: string) =>
 			provider === model.provider && modelId === model.id ? model : undefined,
 		getProvider: () => ({
-			streamSimple: () => ({
+			streamSimple: (_model: unknown, _context: unknown, options: Record<string, unknown>) => {
+				requestOptions = options;
+				return {
 				result: async () => ({
 					stopReason: "stop",
 					content: [{
@@ -27,7 +30,8 @@ test("records dedicated model provenance when model naming succeeds", async () =
 						text: '{"title":"Understand project purpose","kind":"explore","slug":"understand-project-purpose"}',
 					}],
 				}),
-			}),
+				};
+			},
 		}),
 		getProviderAuth: async () => ({ auth: { apiKey: "test" }, source: "test" }),
 	});
@@ -37,6 +41,8 @@ test("records dedicated model provenance when model naming succeeds", async () =
 	assert.equal(result.model, "openai-codex/gpt-5.4-mini");
 	assert.equal(result.fallbackReason, undefined);
 	assert.equal(result.proposal.title, "Understand project purpose");
+	assert.equal(requestOptions?.temperature, undefined);
+	assert.equal(requestOptions?.reasoning, "minimal");
 });
 
 test("records why dedicated model naming fell back to heuristics", async () => {
