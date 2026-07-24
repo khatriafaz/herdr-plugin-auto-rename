@@ -24,7 +24,7 @@ Before making any naming model request or mutation, the extension verifies that:
 
 1. it is running inside Herdr;
 2. the workspace is backed by a linked Git worktree;
-3. the current branch matches `^worktree-` (configurable); and
+3. the current branch matches `^worktree(?:/|-)` (configurable); and
 4. the Pi session has no earlier user message or auto-rename attempt.
 
 The branch is renamed first. Herdr's workspace label is renamed only after Git succeeds. Failures never block the agent's main response.
@@ -83,7 +83,7 @@ Key settings:
 ```toml
 enabled = true
 naming_strategy = "model"            # model | heuristic
-generated_branch_pattern = "^worktree-"
+generated_branch_pattern = "^worktree(?:/|-)"
 branch_prefix_style = "slash"        # slash | hyphen | none
 collision_policy = "suffix"          # suffix | fail
 max_title_length = 48

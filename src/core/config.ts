@@ -7,7 +7,7 @@ import { TASK_KINDS, type AutoRenameConfig, type TaskKind } from "./types.js";
 export const DEFAULT_CONFIG: AutoRenameConfig = {
 	enabled: true,
 	namingStrategy: "model",
-	generatedBranchPattern: "^worktree-",
+	generatedBranchPattern: "^worktree(?:/|-)",
 	branchPrefixStyle: "slash",
 	collisionPolicy: "suffix",
 	maxTitleLength: 48,

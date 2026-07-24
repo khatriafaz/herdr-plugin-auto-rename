@@ -12,6 +12,8 @@ test("config applies defaults and overrides", () => {
 	assert.equal(config.maxSlugLength, 30);
 	assert.equal(config.prefixes.feature, "feature");
 	assert.equal(config.prefixes.fix, DEFAULT_CONFIG.prefixes.fix);
+	assert.match("worktree/silver-stone-eeb7", new RegExp(config.generatedBranchPattern));
+	assert.match("worktree-silver-stone-eeb7", new RegExp(config.generatedBranchPattern));
 });
 
 test("config rejects invalid patterns and values", () => {

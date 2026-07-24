@@ -23,7 +23,7 @@ async function fixture(): Promise<{ root: string; main: string; worktree: string
 	await git(main, "config", "user.email", "test@example.com");
 	await git(main, "config", "user.name", "Test User");
 	await git(main, "commit", "--allow-empty", "-m", "initial");
-	await git(main, "worktree", "add", "-b", "worktree-random-river-1234", worktree);
+	await git(main, "worktree", "add", "-b", "worktree/random-river-1234", worktree);
 	return { root, main, worktree };
 }
 
@@ -59,7 +59,7 @@ test("eligibility requires a generated branch in a linked Herdr worktree", async
 		const result = await checkEligibility({ cwd: item.worktree, env, config: DEFAULT_CONFIG, run: fake.run });
 		assert.deepEqual(result, {
 			eligible: true,
-			branch: "worktree-random-river-1234",
+			branch: "worktree/random-river-1234",
 			workspaceId: "w-test",
 		});
 	} finally {
