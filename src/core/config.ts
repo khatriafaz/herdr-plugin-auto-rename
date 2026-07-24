@@ -7,6 +7,7 @@ import { TASK_KINDS, type AutoRenameConfig, type TaskKind } from "./types.js";
 export const DEFAULT_CONFIG: AutoRenameConfig = {
 	enabled: true,
 	namingStrategy: "model",
+	namingModel: "openai-codex/gpt-5.4-mini",
 	generatedBranchPattern: "^worktree(?:/|-)",
 	branchPrefixStyle: "slash",
 	collisionPolicy: "suffix",
@@ -49,6 +50,14 @@ function bool(value: unknown, field: string, fallback: boolean): boolean {
 	return value;
 }
 
+function modelSpec(value: unknown, fallback: string): string {
+	if (value === undefined) return fallback;
+	if (typeof value !== "string" || !/^[^/\s]+\/[^/\s]+$/.test(value)) {
+		throw new Error("naming_model must use provider/model format");
+	}
+	return value;
+}
+
 function boundedInt(value: unknown, field: string, fallback: number, min: number, max: number): number {
 	if (value === undefined) return fallback;
 	if (!Number.isInteger(value) || (value as number) < min || (value as number) > max) {
@@ -84,6 +93,7 @@ export function parseConfig(raw: RawConfig): AutoRenameConfig {
 	return {
 		enabled: bool(raw.enabled, "enabled", DEFAULT_CONFIG.enabled),
 		namingStrategy: oneOf(raw.naming_strategy, ["model", "heuristic"], "naming_strategy", DEFAULT_CONFIG.namingStrategy),
+		namingModel: modelSpec(raw.naming_model, DEFAULT_CONFIG.namingModel),
 		generatedBranchPattern: pattern,
 		branchPrefixStyle: oneOf(
 			raw.branch_prefix_style,

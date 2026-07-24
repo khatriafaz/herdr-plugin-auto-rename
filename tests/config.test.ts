@@ -9,6 +9,7 @@ test("config applies defaults and overrides", () => {
 		prefixes: { feature: "feature" },
 	});
 	assert.equal(config.namingStrategy, "heuristic");
+	assert.equal(config.namingModel, "openai-codex/gpt-5.4-mini");
 	assert.equal(config.maxSlugLength, 30);
 	assert.equal(config.prefixes.feature, "feature");
 	assert.equal(config.prefixes.fix, DEFAULT_CONFIG.prefixes.fix);
@@ -19,5 +20,6 @@ test("config applies defaults and overrides", () => {
 test("config rejects invalid patterns and values", () => {
 	assert.throws(() => parseConfig({ generated_branch_pattern: "[" }), /valid regular expression/);
 	assert.throws(() => parseConfig({ collision_policy: "overwrite" }), /collision_policy/);
+	assert.throws(() => parseConfig({ naming_model: "gpt-5.4-mini" }), /provider\/model/);
 	assert.throws(() => parseConfig({ max_slug_length: 2 }), /max_slug_length/);
 });

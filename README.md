@@ -83,6 +83,7 @@ Key settings:
 ```toml
 enabled = true
 naming_strategy = "model"            # model | heuristic
+naming_model = "openai-codex/gpt-5.4-mini"
 generated_branch_pattern = "^worktree(?:/|-)"
 branch_prefix_style = "slash"        # slash | hyphen | none
 collision_policy = "suffix"          # suffix | fail
@@ -93,7 +94,7 @@ set_pi_session_name = true
 notify = true
 ```
 
-With `naming_strategy = "model"`, the extension makes one small request using Pi's active model and credentials. It asks only for a short title, task kind, and slug. If the request times out, authentication is unavailable, or output is invalid, deterministic heuristic naming is used instead. Set the strategy to `heuristic` to avoid the extra request and sending the prompt through a second model call.
+With `naming_strategy = "model"`, the extension makes one small request using the dedicated `naming_model` and that provider's credentials. The default is `openai-codex/gpt-5.4-mini`, independently of the larger model selected for the coding session. It asks only for a short title, task kind, and slug, with minimal reasoning. If the mini model is missing, times out, lacks authentication, or returns invalid output, deterministic heuristic naming is used directly; it does not fall back to the active coding model. Set the strategy to `heuristic` to avoid the extra request and sending the prompt through a second model call.
 
 Task kinds map to configurable prefixes:
 

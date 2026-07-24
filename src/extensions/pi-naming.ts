@@ -12,7 +12,10 @@ export async function nameWithPiModel(
 	ctx: ExtensionContext,
 ): Promise<NameProposal> {
 	if (config.namingStrategy === "heuristic") return heuristicName(prompt, config);
-	const model = ctx.model;
+	const separator = config.namingModel.indexOf("/");
+	const providerId = config.namingModel.slice(0, separator);
+	const modelId = config.namingModel.slice(separator + 1);
+	const model = ctx.modelRegistry.find(providerId, modelId);
 	if (!model) return heuristicName(prompt, config);
 	const provider = ctx.modelRegistry.getProvider(model.provider);
 	const authResult = await ctx.modelRegistry.getProviderAuth(model.provider);
@@ -37,6 +40,7 @@ export async function nameWithPiModel(
 				signal: controller.signal,
 				maxTokens: 120,
 				temperature: 0,
+				reasoning: "minimal",
 			},
 		);
 		const response = await stream.result();

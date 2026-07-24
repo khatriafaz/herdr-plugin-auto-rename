@@ -8,6 +8,7 @@ export type CollisionPolicy = "suffix" | "fail";
 export interface AutoRenameConfig {
 	enabled: boolean;
 	namingStrategy: NamingStrategy;
+	namingModel: string;
 	generatedBranchPattern: string;
 	branchPrefixStyle: BranchPrefixStyle;
 	collisionPolicy: CollisionPolicy;
