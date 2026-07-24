@@ -26,6 +26,46 @@ function notifyResult(ctx: ExtensionContext, config: AutoRenameConfig, result: R
 	ctx.ui.notify(describe(result), result.status === "partial" ? "warning" : "info");
 }
 
+function notifySafely(ctx: ExtensionContext, message: string, type: "info" | "warning" | "error"): void {
+	try {
+		ctx.ui.notify(message, type);
+	} catch {
+		// The user may have switched or closed the session while background naming was running.
+	}
+}
+
+async function runFirstPromptRename(
+	pi: ExtensionAPI,
+	prompt: string,
+	ctx: ExtensionContext,
+): Promise<void> {
+	let config: AutoRenameConfig;
+	try {
+		config = await loadConfig();
+	} catch (error) {
+		notifySafely(ctx, (error as Error).message, "error");
+		return;
+	}
+
+	try {
+		const eligibility = await checkEligibility({ cwd: ctx.cwd, env: process.env, config, run: runCommand });
+		if (!eligibility.eligible) return;
+		const proposal = await nameWithPiModel(prompt, config, ctx);
+		const result = await renameWorktree({
+			cwd: ctx.cwd,
+			env: process.env,
+			config,
+			proposal,
+			run: runCommand,
+		});
+		pi.appendEntry(STATE_TYPE, { at: Date.now(), result });
+		if (result.status !== "skipped" && config.setPiSessionName) pi.setSessionName(proposal.title);
+		notifyResult(ctx, config, result);
+	} catch (error) {
+		if (config.notify) notifySafely(ctx, `Auto-rename failed: ${(error as Error).message}`, "warning");
+	}
+}
+
 export default function autoRenameExtension(pi: ExtensionAPI) {
 	let attempted = false;
 
@@ -33,35 +73,11 @@ export default function autoRenameExtension(pi: ExtensionAPI) {
 		attempted = sessionAlreadyStarted(ctx);
 	});
 
-	pi.on("before_agent_start", async (event, ctx) => {
+	pi.on("before_agent_start", (event, ctx) => {
 		if (attempted) return;
 		attempted = true;
-
-		let config: AutoRenameConfig;
-		try {
-			config = await loadConfig();
-		} catch (error) {
-			ctx.ui.notify((error as Error).message, "error");
-			return;
-		}
-
-		try {
-			const eligibility = await checkEligibility({ cwd: ctx.cwd, env: process.env, config, run: runCommand });
-			if (!eligibility.eligible) return;
-			const proposal = await nameWithPiModel(event.prompt, config, ctx);
-			const result = await renameWorktree({
-				cwd: ctx.cwd,
-				env: process.env,
-				config,
-				proposal,
-				run: runCommand,
-			});
-			pi.appendEntry(STATE_TYPE, { at: Date.now(), result });
-			if (result.status !== "skipped" && config.setPiSessionName) pi.setSessionName(proposal.title);
-			notifyResult(ctx, config, result);
-		} catch (error) {
-			if (config.notify) ctx.ui.notify(`Auto-rename failed: ${(error as Error).message}`, "warning");
-		}
+		pi.appendEntry(STATE_TYPE, { at: Date.now(), status: "scheduled" });
+		void runFirstPromptRename(pi, event.prompt, ctx);
 	});
 
 	pi.registerCommand("auto-rename", {

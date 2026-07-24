@@ -1,6 +1,6 @@
 {
   "name": "herdr-plugin-auto-rename",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Rename fresh Herdr worktrees and Git branches from a coding agent's first prompt.",
   "type": "module",
   "keywords": [

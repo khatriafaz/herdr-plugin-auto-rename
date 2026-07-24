@@ -27,7 +27,7 @@ Before making any naming model request or mutation, the extension verifies that:
 3. the current branch matches `^worktree(?:/|-)` (configurable); and
 4. the Pi session has no earlier user message or auto-rename attempt.
 
-The branch is renamed first. Herdr's workspace label is renamed only after Git succeeds. Failures never block the agent's main response.
+Naming and renaming run in the background, so the coding agent starts its main response immediately. The background task checks eligibility again immediately before mutation in case the branch changed while naming was in progress. The branch is renamed first, and Herdr's workspace label is renamed only after Git succeeds. Failures never block the agent's main response.
 
 ## Requirements
 
