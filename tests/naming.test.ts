@@ -27,6 +27,15 @@ test("heuristic naming removes conversational filler", () => {
 	assert.equal(formatBranchName(proposal, DEFAULT_CONFIG), "feat/automatic-retry-handling-to-the-stripe-webhook");
 });
 
+test("heuristic naming converts project questions into an exploratory action", () => {
+	const proposal = heuristicName("what is this project about?", DEFAULT_CONFIG);
+	assert.deepEqual(proposal, {
+		title: "Understand project purpose",
+		kind: "explore",
+		slug: "understand-project-purpose",
+	});
+});
+
 test("model JSON is sanitized and bounded", () => {
 	const proposal = parseModelProposal(
 		'```json\n{"title":"Fix Login Redirect!!!","kind":"fix","slug":"Fix/Login Redirect"}\n```',

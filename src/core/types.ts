@@ -26,6 +26,14 @@ export interface NameProposal {
 	slug: string;
 }
 
+export interface NamingResult {
+	proposal: NameProposal;
+	source: "model" | "heuristic";
+	model?: string;
+	fallbackReason?: string;
+	durationMs: number;
+}
+
 export interface CommandResult {
 	stdout: string;
 	stderr: string;

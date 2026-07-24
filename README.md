@@ -96,6 +96,8 @@ notify = true
 
 With `naming_strategy = "model"`, the extension makes one small request using the dedicated `naming_model` and that provider's credentials. The default is `openai-codex/gpt-5.4-mini`, independently of the larger model selected for the coding session. It asks only for a short title, task kind, and slug, with minimal reasoning. If the mini model is missing, times out, lacks authentication, or returns invalid output, deterministic heuristic naming is used directly; it does not fall back to the active coding model. Set the strategy to `heuristic` to avoid the extra request and sending the prompt through a second model call.
 
+Each completed automatic attempt records its naming provenance in the Pi session as a `herdr-auto-rename-attempt` custom entry. The entry includes `source` (`model` or `heuristic`), the model name when used, duration, and the fallback reason when applicable. This makes silent fallback diagnosable without exposing credentials.
+
 Task kinds map to configurable prefixes:
 
 ```toml
