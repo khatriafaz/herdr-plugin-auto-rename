@@ -35,5 +35,13 @@
   "engines": {
     "node": ">=20"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/khatriafaz/herdr-plugin-auto-rename.git"
+  },
+  "homepage": "https://github.com/khatriafaz/herdr-plugin-auto-rename#readme",
+  "bugs": {
+    "url": "https://github.com/khatriafaz/herdr-plugin-auto-rename/issues"
+  },
   "license": "MIT"
 }

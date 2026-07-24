@@ -62,8 +62,8 @@ herdr plugin unlink afaz.auto-rename
 Once this repository is hosted on GitHub, install both surfaces from the same source:
 
 ```bash
-herdr plugin install OWNER/herdr-plugin-auto-rename
-pi install git:github.com/OWNER/herdr-plugin-auto-rename
+herdr plugin install khatriafaz/herdr-plugin-auto-rename
+pi install git:github.com/khatriafaz/herdr-plugin-auto-rename
 ```
 
 The two-step install is intentional. It avoids silently editing Pi's global settings during Herdr plugin installation and allows either package manager to uninstall its own resources cleanly.
