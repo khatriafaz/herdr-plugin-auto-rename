@@ -1,0 +1,20 @@
+{
+  "name": "herdr-auto-rename",
+  "interface": {
+    "displayName": "Herdr Auto Rename"
+  },
+  "plugins": [
+    {
+      "name": "herdr-plugin-auto-rename",
+      "source": {
+        "source": "local",
+        "path": "./"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Developer Tools"
+    }
+  ]
+}

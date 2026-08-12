@@ -1,0 +1,32 @@
+{
+  "name": "herdr-plugin-auto-rename",
+  "version": "0.4.0+codex.20260812072402",
+  "description": "Automatically rename fresh Herdr workspaces and Git branches from the first Codex prompt.",
+  "author": {
+    "name": "Afaz Khatri",
+    "email": "khatriafaz@gmail.com",
+    "url": "https://github.com/khatriafaz"
+  },
+  "homepage": "https://github.com/khatriafaz/herdr-plugin-auto-rename",
+  "repository": "https://github.com/khatriafaz/herdr-plugin-auto-rename",
+  "license": "MIT",
+  "keywords": [
+    "herdr",
+    "codex",
+    "git-worktree",
+    "automation"
+  ],
+  "interface": {
+    "displayName": "Herdr Auto Rename",
+    "shortDescription": "Name fresh Herdr worktrees from the first prompt",
+    "longDescription": "Automatically gives a fresh Herdr workspace and its Git branch a useful task-based name when the first Codex prompt is submitted.",
+    "developerName": "Afaz Khatri",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Set up automatic Herdr workspace naming"
+    ]
+  }
+}

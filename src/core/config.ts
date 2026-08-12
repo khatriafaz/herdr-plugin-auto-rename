@@ -13,7 +13,7 @@ export const DEFAULT_CONFIG: AutoRenameConfig = {
 	collisionPolicy: "suffix",
 	maxTitleLength: 48,
 	maxSlugLength: 48,
-	modelTimeoutMs: 8000,
+	modelTimeoutMs: 30000,
 	setPiSessionName: true,
 	notify: true,
 	prefixes: {

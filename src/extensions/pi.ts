@@ -4,7 +4,7 @@ import { checkEligibility } from "../core/eligibility.js";
 import { renameWorktree } from "../core/rename.js";
 import { runCommand } from "../core/runner.js";
 import type { AutoRenameConfig, NamingResult, RenameResult } from "../core/types.js";
-import { nameWithPiModel } from "./pi-naming.js";
+import { nameWithPiModel, sessionNamingInput } from "./pi-naming.js";
 
 const STATE_TYPE = "herdr-auto-rename-attempt";
 
@@ -92,16 +92,24 @@ export default function autoRenameExtension(pi: ExtensionAPI) {
 	});
 
 	pi.registerCommand("auto-rename", {
-		description: "Rename the current Herdr workspace and branch from a task description",
+		description: "Rename the current Herdr workspace and branch from a task description or session context",
 		handler: async (args, ctx) => {
-			const prompt = args.trim();
-			if (!prompt) {
-				ctx.ui.notify("Usage: /auto-rename <task description>", "warning");
+			const explicitPrompt = args.trim();
+			const namingInput = explicitPrompt
+				? { prompt: explicitPrompt, modelPrompt: explicitPrompt }
+				: sessionNamingInput(ctx);
+			if (!namingInput) {
+				ctx.ui.notify("No task description or session conversation found", "warning");
 				return;
 			}
 			try {
 				const config = await loadConfig();
-				const naming = await nameWithPiModel(prompt, config, ctx);
+				const naming = await nameWithPiModel(
+					namingInput.prompt,
+					config,
+					ctx,
+					namingInput.modelPrompt,
+				);
 				const { proposal } = naming;
 				const result = await renameWorktree({
 					cwd: ctx.cwd,

@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import type { ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { DEFAULT_CONFIG } from "../src/core/config.js";
-import { nameWithPiModel } from "../src/extensions/pi-naming.js";
+import { nameWithPiModel, sessionNamingInput } from "../src/extensions/pi-naming.js";
 
 function contextWithRegistry(registry: Record<string, unknown>): ExtensionContext {
 	return { modelRegistry: registry } as unknown as ExtensionContext;
@@ -54,4 +54,37 @@ test("records why dedicated model naming fell back to heuristics", async () => {
 	assert.match(result.fallbackReason ?? "", /unavailable/);
 	assert.equal(result.proposal.title, "Understand project purpose");
 	assert.equal(result.proposal.kind, "explore");
+});
+
+test("builds no-input naming context from the active Pi session", () => {
+	const context = {
+		sessionManager: {
+			buildContextEntries: () => ([
+					{ type: "compaction", summary: "The user is improving workspace naming." },
+					{ type: "message", message: { role: "user", content: "Update auto-rename to use the current session." } },
+					{
+						type: "message",
+						message: {
+							role: "assistant",
+							content: [{ type: "text", text: "I will read the Pi session context." }],
+						},
+					},
+					{ type: "message", message: { role: "toolResult", content: [{ type: "text", text: "noisy command output" }] } },
+				]),
+		},
+	} as unknown as ExtensionContext;
+
+	const input = sessionNamingInput(context);
+	assert.equal(input?.prompt, "Update auto-rename to use the current session.");
+	assert.match(input?.modelPrompt ?? "", /Session summary: The user is improving workspace naming\./);
+	assert.match(input?.modelPrompt ?? "", /User: Update auto-rename/);
+	assert.match(input?.modelPrompt ?? "", /Assistant: I will read/);
+	assert.doesNotMatch(input?.modelPrompt ?? "", /noisy command output/);
+});
+
+test("returns no naming input for an empty session", () => {
+	const context = {
+		sessionManager: { buildContextEntries: () => [] },
+	} as unknown as ExtensionContext;
+	assert.equal(sessionNamingInput(context), undefined);
 });

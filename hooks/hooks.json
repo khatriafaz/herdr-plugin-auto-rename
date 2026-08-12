@@ -1,0 +1,16 @@
+{
+  "description": "Rename an eligible Herdr worktree from the first Codex prompt.",
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${PLUGIN_ROOT}/scripts/codex-hook.mjs\"",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}

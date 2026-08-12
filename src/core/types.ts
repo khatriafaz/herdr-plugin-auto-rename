@@ -44,6 +44,7 @@ export interface CommandOptions {
 	cwd?: string;
 	env?: NodeJS.ProcessEnv;
 	timeoutMs?: number;
+	stdin?: string;
 }
 
 export type CommandRunner = (

@@ -1,15 +1,67 @@
 import type { ExtensionContext } from "@earendil-works/pi-coding-agent";
+import { boundedPrompt, NAMING_SYSTEM_PROMPT } from "../core/model-prompt.js";
 import { heuristicName, parseModelProposal } from "../core/naming.js";
 import type { AutoRenameConfig, NamingResult } from "../core/types.js";
 
-const SYSTEM_PROMPT = `You name coding tasks. Return only one compact JSON object with this schema:
-{"title":"Human readable title","kind":"feature|fix|refactor|docs|test|chore|explore","slug":"git-safe-kebab-case"}
-The title must describe the concrete outcome in at most 7 words. Never copy the user's sentence verbatim. Convert questions and requests for explanation into concise action-oriented noun or verb phrases. Do not use question words, first-person pronouns, or trailing punctuation. For example, "what is this project about?" becomes title "Understand project purpose", kind "explore", slug "understand-project-purpose". The slug must be at most 7 words. Do not include a branch prefix in slug.`;
+export interface SessionNamingInput {
+	prompt: string;
+	modelPrompt: string;
+}
+
+function textContent(content: unknown): string {
+	if (typeof content === "string") return content.trim();
+	if (!Array.isArray(content)) return "";
+	return content
+		.filter((part): part is { type: "text"; text: string } =>
+			Boolean(part) && typeof part === "object" && part.type === "text" && typeof part.text === "string")
+		.map((part) => part.text.trim())
+		.filter(Boolean)
+		.join("\n");
+}
+
+export function sessionNamingInput(ctx: ExtensionContext): SessionNamingInput | undefined {
+	const sections: string[] = [];
+	const userPrompts: string[] = [];
+	for (const entry of ctx.sessionManager.buildContextEntries()) {
+		if (entry.type === "branch_summary" || entry.type === "compaction") {
+			const summary = entry.summary.trim();
+			if (summary) sections.push(`Session summary: ${summary}`);
+			continue;
+		}
+		if (entry.type === "custom_message") {
+			const text = textContent(entry.content);
+			if (text) sections.push(`Context: ${text}`);
+			continue;
+		}
+		if (entry.type !== "message") continue;
+		const message = entry.message;
+		if (message.role !== "user" && message.role !== "assistant" && message.role !== "custom") continue;
+		const text = textContent(message.content);
+		if (!text) continue;
+		if (message.role === "user") userPrompts.push(text);
+		const label = message.role === "user" ? "User" : message.role === "assistant" ? "Assistant" : "Context";
+		sections.push(`${label}: ${text}`);
+	}
+	if (sections.length === 0) return undefined;
+	const prompt = userPrompts.join("\n") || sections.join("\n\n");
+	return {
+		prompt,
+		modelPrompt: [
+			"Infer a single coding-task name from the current Pi session conversation.",
+			"Prioritize the user's goal and the concrete outcome of the work over incidental implementation details.",
+			"",
+			"<session>",
+			sections.join("\n\n"),
+			"</session>",
+		].join("\n"),
+	};
+}
 
 export async function nameWithPiModel(
 	prompt: string,
 	config: AutoRenameConfig,
 	ctx: ExtensionContext,
+	modelPrompt = prompt,
 ): Promise<NamingResult> {
 	const startedAt = Date.now();
 	const heuristic = (fallbackReason?: string): NamingResult => ({
@@ -38,8 +90,8 @@ export async function nameWithPiModel(
 		const stream = provider.streamSimple(
 			requestModel,
 			{
-				systemPrompt: SYSTEM_PROMPT,
-				messages: [{ role: "user", content: prompt.slice(0, 6000), timestamp: Date.now() }],
+				systemPrompt: NAMING_SYSTEM_PROMPT,
+				messages: [{ role: "user", content: boundedPrompt(modelPrompt), timestamp: Date.now() }],
 			},
 			{
 				...(authResult.auth.apiKey ? { apiKey: authResult.auth.apiKey } : {}),
