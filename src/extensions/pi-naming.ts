@@ -99,7 +99,7 @@ export async function nameWithPiModel(
 				...(authResult.env ? { env: authResult.env } : {}),
 				signal: controller.signal,
 				maxTokens: 120,
-				reasoning: "minimal",
+				reasoning: "low",
 			},
 		);
 		const response = await stream.result();

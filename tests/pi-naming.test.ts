@@ -12,7 +12,7 @@ test("records dedicated model provenance when model naming succeeds", async () =
 	let requestOptions: Record<string, unknown> | undefined;
 	const model = {
 		provider: "openai-codex",
-		id: "gpt-5.4-mini",
+		id: "gpt-5.6-luna",
 		api: "openai-codex-responses",
 		baseUrl: "https://example.test",
 	};
@@ -38,11 +38,11 @@ test("records dedicated model provenance when model naming succeeds", async () =
 
 	const result = await nameWithPiModel("what is this project about?", DEFAULT_CONFIG, context);
 	assert.equal(result.source, "model");
-	assert.equal(result.model, "openai-codex/gpt-5.4-mini");
+	assert.equal(result.model, "openai-codex/gpt-5.6-luna");
 	assert.equal(result.fallbackReason, undefined);
 	assert.equal(result.proposal.title, "Understand project purpose");
 	assert.equal(requestOptions?.temperature, undefined);
-	assert.equal(requestOptions?.reasoning, "minimal");
+	assert.equal(requestOptions?.reasoning, "low");
 });
 
 test("records why dedicated model naming fell back to heuristics", async () => {

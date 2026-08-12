@@ -27,7 +27,7 @@ test("uses an isolated Codex request and records model provenance", async () => 
 	});
 
 	assert.equal(result.source, "model");
-	assert.equal(result.model, "openai-codex/gpt-5.4-mini");
+	assert.equal(result.model, "openai-codex/gpt-5.6-luna");
 	assert.equal(result.proposal.title, "Add Codex auto rename");
 	assert.equal(invocation?.command, "fake-codex");
 	assert.equal(invocation?.timeoutMs, DEFAULT_CONFIG.modelTimeoutMs);

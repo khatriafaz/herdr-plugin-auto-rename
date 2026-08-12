@@ -7,7 +7,7 @@ import { TASK_KINDS, type AutoRenameConfig, type TaskKind } from "./types.js";
 export const DEFAULT_CONFIG: AutoRenameConfig = {
 	enabled: true,
 	namingStrategy: "model",
-	namingModel: "openai-codex/gpt-5.4-mini",
+	namingModel: "openai-codex/gpt-5.6-luna",
 	generatedBranchPattern: "^worktree(?:/|-)",
 	branchPrefixStyle: "slash",
 	collisionPolicy: "suffix",

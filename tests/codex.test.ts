@@ -57,7 +57,7 @@ function hookInput(cwd: string, sessionId = "session-1"): CodexHookInput {
 const naming: NamingResult = {
 	proposal: { title: "Stripe webhook retries", kind: "feature", slug: "stripe-webhook-retries" },
 	source: "model",
-	model: "openai-codex/gpt-5.4-mini",
+	model: "openai-codex/gpt-5.6-luna",
 	durationMs: 10,
 };
 

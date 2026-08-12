@@ -1,6 +1,6 @@
 {
   "name": "herdr-plugin-auto-rename",
-  "version": "0.4.0+codex.20260812072402",
+  "version": "0.4.0+codex.20260812073424",
   "description": "Automatically rename fresh Herdr workspaces and Git branches from the first Codex prompt.",
   "author": {
     "name": "Afaz Khatri",
