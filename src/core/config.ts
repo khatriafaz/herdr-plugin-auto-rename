@@ -121,7 +121,7 @@ export async function loadConfig(path = defaultConfigPath()): Promise<AutoRename
 		const contents = await readFile(path, "utf8");
 		return parseConfig(parse(contents) as RawConfig);
 	} catch (error) {
-		if ((error as NodeJS.ErrnoException).code === "ENOENT") return structuredClone(DEFAULT_CONFIG);
+		if ((error as NodeJS.ErrnoException).code === "ENOENT") return parseConfig({});
 		throw new Error(`Invalid auto-rename config at ${path}: ${(error as Error).message}`);
 	}
 }
